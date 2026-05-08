@@ -1,0 +1,34 @@
+// GET /api/products — возвращает все товары, включая их варианты
+// GET /api/products/:slug — возвращает один товар по slug
+// POST /api/products — создаёт новый товар
+// Используй express.Router() и prisma из src/lib/prisma.ts.
+
+import express from "express";
+import prisma from "../lib/prisma";
+
+const router = express.Router();
+
+router.get('/', async (req, res) => {
+    const products = await prisma.product.findMany();
+    res.json(products);
+});
+
+router.get('/:slug', async (req, res) => {
+    const slug = req.params.slug;
+    const product = await prisma.product.findUnique({
+        where: {slug}
+    });
+    res.json(product);
+});
+
+
+router.post('/', async (req, res) => {
+    const data = req.body;
+    const createdProduct = await prisma.product.create({
+        data
+    })
+    res.json(createdProduct);
+});
+
+
+export default router;
