@@ -4,6 +4,7 @@
 
 import express from "express";
 import prisma from "../lib/prisma";
+import { authenticateToken } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.get('/:slug', async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     const data = req.body;
     const createdProduct = await prisma.product.create({
         data
