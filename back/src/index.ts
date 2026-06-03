@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 
 import productRoutes from './routes/products'
 import authRoutes from './routes/auth'
+import cartRoutes from './routes/cart'
 
 dotenv.config()
 const app = express()
@@ -16,8 +17,9 @@ app.get('/health', (req, res) => {
 })
 
 app.use('/api/products', productRoutes)
-
 app.use('/api/auth', authRoutes)
+app.use('/api/cart', cartRoutes)
+
 
 
 const PORT = process.env.PORT || 4000
