@@ -26,7 +26,7 @@ router.post("/", authenticateToken, async (req, res) => {
 });
 
 router.delete("/:id", authenticateToken, async (req, res) => {
-    const id = req.params.id;
+    const id = req.params.id as string;
     const deletedProduct = await prisma.cartItem.delete({
         where: { id }
     });
