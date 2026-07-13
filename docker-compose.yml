@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: shop-db
+    environment:
+      POSTGRES_DB: shop
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  back:
+    build: ./back
+    container_name: shop-back
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./back/.env
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
