@@ -1,7 +1,3 @@
-// GET /api/products — возвращает все товары, включая их варианты
-// GET /api/products/:slug — возвращает один товар по slug
-// POST /api/products — создаёт новый товар
-
 import express from "express";
 import prisma from "../lib/prisma";
 import { authenticateToken } from "../middleware/auth";
@@ -29,6 +25,7 @@ router.post('/', authenticateToken, async (req, res) => {
     })
     res.json(createdProduct);
 });
+
 
 
 export default router;

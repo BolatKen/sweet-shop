@@ -1,8 +1,3 @@
-// POST / — создать заказ из корзины
-// GET / — история заказов юзера
-// GET /:id — один заказ
-
-// Все три защищены authenticateToken. 
 import express from 'express';
 import prisma from '../lib/prisma';
 import {authenticateToken} from '../middleware/auth';

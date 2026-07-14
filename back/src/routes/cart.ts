@@ -1,8 +1,3 @@
-// GET /api/cart — корзина текущего юзера
-// POST /api/cart — добавить товар
-// DELETE /api/cart/:id — удалить из корзины
-
-// Все три роута должны быть защищены authenticateToken — корзина только для авторизованных.
 import express from "express";
 import prisma from "../lib/prisma";
 import { authenticateToken } from "../middleware/auth";

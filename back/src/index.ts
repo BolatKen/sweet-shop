@@ -6,6 +6,7 @@ import productRoutes from './routes/products'
 import authRoutes from './routes/auth'
 import cartRoutes from './routes/cart'
 import orderRoutes from './routes/orders'
+import categoryRoutes from './routes/categories'
 
 dotenv.config()
 const app = express()
@@ -21,6 +22,7 @@ app.use('/api/products', productRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/cart', cartRoutes)
 app.use('/api/orders', orderRoutes)
+app.use('/api/categories', categoryRoutes)
 
 
 const PORT = process.env.PORT || 4000
