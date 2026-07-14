@@ -22,6 +22,26 @@ services:
       - ./back/.env
     depends_on:
       - db
+  
+  prisma-studio:
+    build: ./back
+    container_name: shop-prisma-studio
+    command: npx prisma studio
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./back/.env
+    depends_on:
+      - db
 
+  front:
+    build: ./front
+    container_name: shop-front
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./front/.env
+    depends_on:
+      - back
 volumes:
   postgres_data:
