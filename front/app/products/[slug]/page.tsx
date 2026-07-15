@@ -1,10 +1,9 @@
-import { Product } from '@/lib/types'
-import { apiFetch } from '@/lib/api'
+import { getProductBySlug } from '@/lib/api/products'
 import Link from 'next/link'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const product = await apiFetch<Product>(`/api/products/${slug}`)
+  const product = await getProductBySlug(slug) 
 
   if (!product) {
     return (

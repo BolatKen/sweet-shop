@@ -1,9 +1,8 @@
-import { Product } from '@/lib/types'
-import { apiFetch } from '@/lib/api'
 import Link from 'next/link'
+import { getProducts } from '@/lib/api/products'
 
 export default async function ProductCart() {
-    const products = await apiFetch<Product[]>('/api/products');
+    const products = await getProducts();
 
     return(
         <main className="max-w-6xl mx-auto px-4 py-8">

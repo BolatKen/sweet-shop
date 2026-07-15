@@ -1,3 +1,15 @@
+export interface User {
+  id: string 
+  email: string   
+  passwordHash: string
+  role: Role      
+  createdAt: string 
+  orders: Order[]
+  cartItems: CartItem[]
+}
+
+export type Role = 'CUSTOMER'| 'ADMIN'
+
 export interface ProductVariant {
   id: string
   size: string
@@ -19,12 +31,46 @@ export interface Product {
 }
 
 export interface  Category {
-  id:        String       
-  name:      String
-  slug:      String  
-  parentId:  String | null
+  id:        string       
+  name:      string
+  slug:      string  
+  parentId:  string | null
   parent:    Category | null  
   children:  Category[] 
   products:  Product[]
 }
 
+export interface CartItem {
+  id: string
+  user: User
+  userId: string
+  variant: ProductVariant
+  variantId: string
+  quantity: number
+  createdAt: string
+}
+
+export interface Order {
+  id: string      
+  user: User        
+  userId: string
+  status: OrderStatus 
+  total: number
+  deliveryAddress: string
+  stripePaymentId: string | null
+  items: OrderItem[]
+  createdAt: string
+}
+
+
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIEVERED' | 'CANCELLED'
+
+export interface OrderItem {
+  id: string
+  order: Order
+  orderId: string
+  variant: ProductVariant
+  variantId: string
+  quantity: number
+  price: number
+}
