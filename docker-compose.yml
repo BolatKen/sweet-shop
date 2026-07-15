@@ -22,7 +22,10 @@ services:
       - ./back/.env
     depends_on:
       - db
-  
+    volumes:
+      - ./back:/app
+      - /app/node_modules
+
   prisma-studio:
     build: ./back
     container_name: shop-prisma-studio
@@ -43,5 +46,9 @@ services:
       - ./front/.env
     depends_on:
       - back
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+
 volumes:
   postgres_data:
