@@ -12,7 +12,8 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
     const slug = req.params.slug;
     const product = await prisma.product.findUnique({
-        where: {slug}
+        where: {slug},
+        include: {variants: true}
     });
     res.json(product);
 });

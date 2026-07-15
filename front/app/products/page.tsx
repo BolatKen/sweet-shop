@@ -2,7 +2,7 @@ import { Product } from '@/lib/types'
 import { apiFetch } from '@/lib/api'
 import Link from 'next/link'
 
-export default async function ProductPage() {
+export default async function ProductCart() {
     const products = await apiFetch<Product[]>('/api/products');
 
     return(
