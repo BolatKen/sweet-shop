@@ -1,8 +1,10 @@
 "use client";
 import Link from 'next/link';
 import { useState } from "react";
+import { useEffect } from "react";
+import { usePathname } from 'next/navigation'
 
-export default function Navbar() {
+export default function Navbar({authButton} : { authButton: React.ReactNode }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -13,6 +15,11 @@ export default function Navbar() {
     { name: "Cart", href: "/cart" },
     { name: "Contact", href: "/contact" },
   ];
+    const pathname = usePathname()
+
+    useEffect(() => {
+      setIsMobileMenuOpen(false)
+    }, [pathname])
 
   return(
     <div>
@@ -93,11 +100,9 @@ export default function Navbar() {
                 </li>
               ))}
               <li className="mt-4">
-                <Link onClick={() => {setIsMobileMenuOpen(false);}} href={'/auth/login'}>
-                    <button className="bg-red-600 text-white px-8 py-2 rounded-md hover:bg-red-500">
-                      Login
-                    </button>
-                </Link>
+                
+                {authButton}
+
               </li>
             </ul>
           </div>
@@ -116,11 +121,7 @@ export default function Navbar() {
                 </li>
               ))}
               <li>
-                <Link href="/auth/login">
-                    <button className="bg-red-600 hover:bg-red-500 text-white px-8 py-2 rounded-md">
-                      Login
-                    </button>
-                </Link>
+                {authButton}
               </li>
             </ul>
           </div>

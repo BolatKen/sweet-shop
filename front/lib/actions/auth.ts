@@ -37,3 +37,10 @@ export async function registerUser(prevState: string | undefined, formData: Form
 
   redirect('/auth/login')
 }
+
+
+export async function logoutUser() {
+  const cookieStore = await cookies();
+  cookieStore.delete('token');
+  redirect('/');
+}
