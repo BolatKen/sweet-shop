@@ -1,6 +1,6 @@
 'use server'
 
-import { login, register } from '@/lib/api/authenticate'
+import { apiFetch } from '@/lib/api'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -9,7 +9,10 @@ export async function loginUser(prevState: string | undefined, formData: FormDat
   const password = formData.get('password') as string
 
   try {
-    const res = await login(email, password)
+    const res = await apiFetch<{token:string; message:string}>('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({email, password})
+    })
     if (!res.token) return 'Incorrect email or password'
     
     const cookieStore = await cookies()
@@ -30,7 +33,10 @@ export async function registerUser(prevState: string | undefined, formData: Form
   const password = formData.get('password') as string
 
   try {
-    await register(email, password)
+    await apiFetch<{message:string}>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({email, password}),
+    })
   } catch {
     return 'Registration error'
   }

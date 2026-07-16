@@ -6,16 +6,28 @@ const router = express.Router();
 
 router.get("/", authenticateToken, async (req, res) => {
     const userId = (req as any).user.id
-    const products = await prisma.cartItem.findMany({
-        where: {userId: userId}
+    const cartItems = await prisma.cartItem.findMany({
+        where: { userId },
+        include: {
+            variant: {
+                include: {
+                    product: true
+                }
+            }
+        }
     });
-    res.json(products);
+    res.json(cartItems);
 });
 
 router.post("/", authenticateToken, async (req, res) => {
-    const data = req.body;
+    const userId = (req as any).user.id
+    const { variantId, quantity } = req.body
     const createdCartItem = await prisma.cartItem.create({
-        data
+        data: {
+            userId,
+            variantId,
+            quantity
+        }
     });
     res.json(createdCartItem);
 });

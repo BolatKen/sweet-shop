@@ -1,5 +1,6 @@
 import { getProductBySlug } from '@/lib/api/products'
 import Link from 'next/link'
+import  AddToCartButton  from '@/components/AddToCartButton'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -35,10 +36,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               ))}
             </div>
           </div>
-
-          <button className="mt-4 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition">
-            Add to cart
-          </button>
+          
+          <AddToCartButton variantId={product.variants[0].id} />
         </div>
       </div>
     </main>

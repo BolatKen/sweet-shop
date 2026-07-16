@@ -42,12 +42,13 @@ export interface  Category {
 
 export interface CartItem {
   id: string
-  user: User
   userId: string
-  variant: ProductVariant
   variantId: string
   quantity: number
   createdAt: string
+  variant: ProductVariant & {
+    product : Product
+  }
 }
 
 export interface Order {
