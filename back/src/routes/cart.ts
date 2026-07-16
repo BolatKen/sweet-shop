@@ -22,13 +22,27 @@ router.get("/", authenticateToken, async (req, res) => {
 router.post("/", authenticateToken, async (req, res) => {
     const userId = (req as any).user.id
     const { variantId, quantity } = req.body
+
+    const existing = await prisma.cartItem.findFirst({
+        where: { userId, variantId }
+    })
+
+    if (existing) {
+        const updated = await prisma.cartItem.update({
+        where: { id: existing.id },
+        data: { quantity: existing.quantity + quantity }
+        })
+        return res.json(updated)
+    }
+
+  
     const createdCartItem = await prisma.cartItem.create({
-        data: {
-            userId,
-            variantId,
-            quantity
-        }
-    });
+            data: {
+                userId,
+                variantId,
+                quantity
+            }
+        });
     res.json(createdCartItem);
 });
 
