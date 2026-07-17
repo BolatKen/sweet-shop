@@ -2,13 +2,19 @@
 
 import { addToCart } from '@/lib/actions/cart'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function AddToCartButton({ variantId }: { variantId: string }) {
     const [ status, setStatus ] = useState< 'idle' | 'loading' | 'success' | 'error'>('idle')
+    const router = useRouter();
 
     async function handleClick() {
         setStatus('loading')
-        const ok = await addToCart(variantId)
+        const ok = await addToCart(variantId) as any
+        if (ok?.message === 'Token missing') {
+            router.push('/auth/login')
+            return
+        }
         setStatus(ok ? 'success' : 'error')
         setTimeout(() => setStatus('idle'), 2000)
     }
