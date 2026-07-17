@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { addToCart } from '@/lib/actions/cart'
 
 interface QuantitySelectorProps {
@@ -15,9 +14,9 @@ export default function QuantitySelector({
     initialQuantity,
     onQuantityChange 
 }: QuantitySelectorProps) {
+    
     const [quantity, setQuantity] = useState(initialQuantity)
     const [isLoading, setIsLoading] = useState(false)
-    const router = useRouter();
 
     const handleQuantityChange = async (change: number) => {
         if (isLoading) return
@@ -30,7 +29,6 @@ export default function QuantitySelector({
             const newQuantity = quantity + change
             setQuantity(newQuantity)
             onQuantityChange?.(newQuantity)
-            router.refresh();
         } catch (error) {
             console.error('Failed to update cart:', error)
         } finally {

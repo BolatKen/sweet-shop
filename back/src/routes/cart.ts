@@ -28,13 +28,23 @@ router.post("/", authenticateToken, async (req, res) => {
     })
 
     if (existing) {
+        const newQuantity = existing.quantity + quantity
+        if (newQuantity <= 0) {
+            await prisma.cartItem.delete({
+                where: {id: existing.id}
+            })
+            return res.json({ deleted: true, id: existing.id })
+        }
+
         const updated = await prisma.cartItem.update({
         where: { id: existing.id },
-        data: { quantity: existing.quantity + quantity }
+        data: { quantity: newQuantity }
         })
         return res.json(updated)
     }
-
+        if (quantity <= 0) {
+            return res.status(400).json({ error: "Cannot add zero or negative quantity" })
+        }
   
     const createdCartItem = await prisma.cartItem.create({
             data: {
@@ -48,10 +58,11 @@ router.post("/", authenticateToken, async (req, res) => {
 
 router.delete("/:id", authenticateToken, async (req, res) => {
     const id = req.params.id as string;
-    const deletedProduct = await prisma.cartItem.delete({
-        where: { id }
+    const deletedCartItem = await prisma.cartItem.delete({
+        where: { id },
+
     });
-    res.json(deletedProduct);
+    res.json(deletedCartItem);
 });
 
 export default router;

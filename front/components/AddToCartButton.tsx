@@ -3,6 +3,7 @@
 import { addToCart } from '@/lib/actions/cart'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from '@/components/Button'
 
 export default function AddToCartButton({ variantId }: { variantId: string }) {
     const [ status, setStatus ] = useState< 'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -20,7 +21,7 @@ export default function AddToCartButton({ variantId }: { variantId: string }) {
     }
 
     return(
-        <button 
+        <Button
             onClick={handleClick} 
             disabled={status === 'loading'}
             className="mt-4 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
@@ -29,6 +30,6 @@ export default function AddToCartButton({ variantId }: { variantId: string }) {
             {status === 'loading' && 'Adding...'}
             {status === 'success' && '✓ Added!'}
             {status === 'error' && 'Error, try again'}
-        </button>
+        </Button>
     )
 }

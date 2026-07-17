@@ -1,6 +1,7 @@
 import { getCart } from '@/lib/actions/cart'
 import Link from 'next/link'
 import QuantitySelector from '@/components/QuantitySelector'
+import Button from '@/components/Button'
 
 export default async function CartPage() {
     const cart = await getCart();
@@ -40,7 +41,6 @@ export default async function CartPage() {
                             <h2 className="font-semibold text-lg">{cartItem.variant.product.name}</h2>
                             <p className="text-gray-500 text-sm">{cartItem.variant.size} / {cartItem.variant.color}</p>
                             <p className="font-bold mt-2">{(cartItem.variant.price / 100).toLocaleString()} ₸</p>
-                            <p className="text-sm text-gray-400">Количество: {cartItem.quantity}</p>
                             </div>
                         </Link>
                         <QuantitySelector
@@ -50,6 +50,9 @@ export default async function CartPage() {
                     </div>
                     ))}
             </div>
+            <Link href='/checkout'>
+            <Button> Checkout </Button>
+            </Link>
         </main>
     )
 }
