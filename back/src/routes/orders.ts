@@ -23,7 +23,6 @@ router.post("/", authenticateToken, async (req, res) => {
     }
   })
 
-  // очищаем корзину
   await prisma.cartItem.deleteMany({
     where: { userId }
   })

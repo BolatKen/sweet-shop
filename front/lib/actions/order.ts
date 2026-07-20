@@ -28,7 +28,7 @@ export async function createOrder(prevState: string | undefined, formData: FormD
 }
 
 export async function getOrders() {
-
+  return apiFetch<Order[]>('/api/orders')
 }
 
 export async function getOrderById(orderId:string) {

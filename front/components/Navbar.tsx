@@ -13,7 +13,7 @@ export default function Navbar({authButton} : { authButton: React.ReactNode }) {
     const navItems = [
     { name: "Catalog", href: "/products" },
     { name: "Cart", href: "/cart" },
-    { name: "Contact", href: "/contact" },
+    { name: "Profile", href: "/profile" },
   ];
     const pathname = usePathname()
 

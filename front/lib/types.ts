@@ -52,10 +52,9 @@ export interface CartItem {
 }
 
 export interface Order {
-  id: string      
-  user: User        
+  id: string
   userId: string
-  status: OrderStatus 
+  status: OrderStatus
   total: number
   deliveryAddress: string
   stripePaymentId: string | null
@@ -70,8 +69,10 @@ export interface OrderItem {
   id: string
   order: Order
   orderId: string
-  variant: ProductVariant
   variantId: string
   quantity: number
   price: number
+  variant: ProductVariant & {
+    product: Product
+  }
 }
