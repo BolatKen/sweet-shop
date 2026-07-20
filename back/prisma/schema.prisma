@@ -20,6 +20,7 @@ model User {
 enum Role {
   CUSTOMER
   ADMIN
+  MANAGER
 }
 
 model Category {

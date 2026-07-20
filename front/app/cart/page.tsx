@@ -10,9 +10,9 @@ export default async function CartPage() {
     if (!Array.isArray(cart)) {
         return (
         <main className="min-h-screen flex flex-col items-center justify-center">
-            <p className="text-gray-500 text-lg">Войдите чтобы просмотреть корзину</p>
+            <p className="text-gray-500 text-lg">Log in to chekc cart</p>
             <Link href="/auth/login" className="mt-4 bg-black text-white px-6 py-3 rounded-xl">
-            Войти
+            Log in
             </Link>
         </main>
         )

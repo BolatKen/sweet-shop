@@ -1,14 +1,13 @@
 export interface User {
   id: string 
-  email: string   
-  passwordHash: string
+  email: string
   role: Role      
   createdAt: string 
   orders: Order[]
   cartItems: CartItem[]
 }
 
-export type Role = 'CUSTOMER'| 'ADMIN'
+export type Role = 'CUSTOMER'| 'ADMIN' | 'MANAGER'
 
 export interface ProductVariant {
   id: string
@@ -60,9 +59,10 @@ export interface Order {
   stripePaymentId: string | null
   items: OrderItem[]
   createdAt: string
+  user: {
+    email: string
+  }
 }
-
-
 export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIEVERED' | 'CANCELLED'
 
 export interface OrderItem {

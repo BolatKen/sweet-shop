@@ -51,7 +51,7 @@ export default function QuantitySelector({
                     }
                     disabled:opacity-50
                 `}
-                aria-label="Уменьшить количество"
+                aria-label="Decrease quantity"
             >
                 {quantity === 1 ? '🗑️' : '−'}
             </button>
@@ -70,7 +70,7 @@ export default function QuantitySelector({
                     transition-colors duration-200
                     disabled:opacity-50
                 "
-                aria-label="Увеличить количество"
+                aria-label="Increase quantity"
             >
                 +
             </button>

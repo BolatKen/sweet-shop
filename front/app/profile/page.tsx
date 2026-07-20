@@ -9,9 +9,9 @@ export default async function ProfilePage() {
      if (!me || !me.email) {
         return (
         <main className="min-h-screen flex flex-col items-center justify-center">
-            <p className="text-gray-500">Войдите чтобы просмотреть профиль</p>
+            <p className="text-gray-500">Log in to see profile</p>
             <Link href="/auth/login" className="mt-4 bg-black text-white px-6 py-3 rounded-xl">
-            Войти
+            Log in
             </Link>
         </main>
         )
@@ -21,19 +21,17 @@ export default async function ProfilePage() {
     return (
     <main className="max-w-4xl mx-auto px-4 py-8">
         
-        {/* Профиль */}
         <div className="border rounded-xl p-6 mb-8">
-        <h1 className="text-2xl font-bold mb-2">Профиль</h1>
+        <h1 className="text-2xl font-bold mb-2">Profile</h1>
         <p className="text-gray-500">{me.email}</p>
         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full mt-1 inline-block">
             {me.role}
         </span>
         </div>
 
-        {/* Заказы */}
-        <h2 className="text-xl font-bold mb-4">История заказов</h2>
+        <h2 className="text-xl font-bold mb-4">Order history</h2>
         {me.orders.length === 0 ? (
-        <p className="text-gray-500">У вас пока нет заказов</p>
+        <p className="text-gray-500">You don't have any orders</p>
         ) : (
         <div className="flex flex-col gap-4">
             {me.orders.map(order => (
@@ -48,7 +46,7 @@ export default async function ProfilePage() {
                     {order.items.map(item => (
                         <div key={item.id} className="text-sm text-gray-600 flex justify-between">
                         <span>{item.variant.product.name} — {item.variant.size} / {item.variant.color}</span>
-                        <span>{item.quantity} шт. × {(item.variant.price / 100).toLocaleString()} ₸</span>
+                        <span>{item.quantity} pcs. × {(item.variant.price / 100).toLocaleString()} ₸</span>
                         </div>
                     ))}
                     </div>

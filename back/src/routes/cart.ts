@@ -37,9 +37,9 @@ router.post("/", authenticateToken, async (req, res) => {
         }
 
         const updated = await prisma.cartItem.update({
-        where: { id: existing.id },
-        data: { quantity: newQuantity }
-        })
+            where: { id: existing.id },
+            data: { quantity: newQuantity }
+            })
         return res.json(updated)
     }
         if (quantity <= 0) {

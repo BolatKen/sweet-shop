@@ -6,7 +6,7 @@ export default async function ProductCart() {
 
     return(
         <main className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-6">Каталог</h1>
+            <h1 className="text-2xl font-bold mb-6">Catalog</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map(product => (
                 <Link href={`/products/${product.slug}`} key={product.id}>

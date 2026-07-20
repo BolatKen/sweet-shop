@@ -23,19 +23,19 @@ export default function OrderSuccess({
                 </div>
             </div>
             
-            <h1 className="text-3xl font-bold mb-2">Спасибо за заказ!</h1>
-            <p className="text-gray-500 mb-4">Номер заказа: #{orderId}</p>
+            <h1 className="text-3xl font-bold mb-2">Thank you for purchasing!</h1>
+            <p className="text-gray-500 mb-4">Order number: #{orderId}</p>
             
             <div className="max-w-md mx-auto bg-gray-50 rounded-xl p-6 mb-6 text-left">
-                <p className="font-semibold mb-2">Детали заказа:</p>
+                <p className="font-semibold mb-2">Order details:</p>
                 <div className="space-y-1 text-sm text-gray-600">
                     {items.map((item, i) => (
                         <p key={i}>{item.name} × {item.quantity}</p>
                     ))}
                     <p className="border-t pt-2 mt-2 font-semibold text-black">
-                        Итого: {total.toLocaleString()} ₸
+                        Total: {total.toLocaleString()} ₸
                     </p>
-                    <p className="text-sm">Адрес: {address}</p>
+                    <p className="text-sm">Address: {address}</p>
                 </div>
             </div>
             
@@ -44,13 +44,13 @@ export default function OrderSuccess({
                     href="/"
                     className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition"
                 >
-                    Вернуться в каталог
+                    Back to catalog
                 </Link>
                 <Link 
-                    href="/orders"
+                    href="/profile"
                     className="border border-black px-6 py-3 rounded-xl hover:bg-gray-50 transition"
                 >
-                    Мои заказы
+                    My orders
                 </Link>
             </div>
         </div>
