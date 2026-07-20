@@ -24,11 +24,46 @@ router.post('/login', async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: '1h' });
-        res.status(200).json({ token, message: 'Logged in successfully' });
+
+        const accessToken = jwt.sign
+            ({ id: user.id, role: user.role },
+            process.env.JWT_SECRET!, 
+            { expiresIn: '15m' });
+
+        const refreshToken = jwt.sign
+            ({ id: user.id, role: user.role}, 
+            process.env.JWT_SECRET!, 
+            { expiresIn: '720h'});
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { refreshToken }
+            })
+
+        res.status(200).json({ accessToken, refreshToken, message: 'Logged in successfully' });
     } catch (err: any) {
         res.status(500).json({message: "Error logging in", error: err.message});
     }
+})
+
+router.post('/refresh', async (req, res) => {
+  const { refreshToken } = req.body
+  try {
+    if (!refreshToken) return res.status(400).json({ message: 'Refresh token missing' })
+
+    const user = await prisma.user.findFirst({ where: { refreshToken } })
+    if (!user) return res.status(401).json({ message: 'Invalid refresh token' })
+
+    const accessToken = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET!,
+      { expiresIn: '15m' }
+    )
+
+    res.json({ accessToken })
+  } catch (err: any) {
+    res.status(500).json({ message: 'Error refreshing token', error: err.message })
+  }
 })
 
 export default router;

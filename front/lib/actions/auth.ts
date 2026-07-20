@@ -9,16 +9,22 @@ export async function loginUser(prevState: string | undefined, formData: FormDat
   const password = formData.get('password') as string
 
   try {
-    const res = await apiFetch<{token:string; message:string}>('/api/auth/login', {
+    const res = await apiFetch<{accessToken:string; refreshToken:string; message:string}>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({email, password})
     })
-    if (!res.token) return 'Incorrect email or password'
+    if (!res.accessToken || !res.refreshToken) return 'Incorrect email or password'
     
     const cookieStore = await cookies()
-    cookieStore.set('token', res.token, {
+    cookieStore.set('accessToken', res.accessToken, {
       httpOnly: true,
       path: '/',
+      maxAge: 60 * 15 
+    })
+    cookieStore.set('refreshToken', res.refreshToken, {
+      httpOnly: true,
+      path: '/',
+      maxAge: 60 * 60  * 24 * 30
     })
 
   } catch {
@@ -47,6 +53,7 @@ export async function registerUser(prevState: string | undefined, formData: Form
 
 export async function logoutUser() {
   const cookieStore = await cookies();
-  cookieStore.delete('token');
+  cookieStore.delete('accessToken');
+  cookieStore.delete('refreshToken');
   redirect('/');
 }

@@ -12,6 +12,7 @@ model User {
   email        String    @unique
   passwordHash String
   role         Role      @default(CUSTOMER)
+  refreshToken String? @unique
   createdAt    DateTime  @default(now())
   orders       Order[]
   cartItems    CartItem[]
