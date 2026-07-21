@@ -4,9 +4,9 @@ import prisma from '../lib/prisma'
 import { authenticateToken } from '../middleware/auth'
 
 const router = express.Router()
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 router.post('/checkout', authenticateToken, async (req, res) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   const userId = (req as any).user.id
   const { orderId } = req.body
 
@@ -46,6 +46,7 @@ router.post('/checkout', authenticateToken, async (req, res) => {
 })
 
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   const sig = req.headers['stripe-signature'] as string
 
   let event
