@@ -14,7 +14,10 @@ import paymentRoutes from './routes/payments'
 dotenv.config()
 const app = express()
 
-app.use(cors())
+app.use(cors({
+  origin: 'https://sweet-shop-one-flame.vercel.app',
+  credentials: true
+}))
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }))
 app.use(express.json())
 
