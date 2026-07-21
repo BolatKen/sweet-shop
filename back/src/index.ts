@@ -9,11 +9,13 @@ import orderRoutes from './routes/orders'
 import categoryRoutes from './routes/categories'
 import userRoutes from './routes/users'
 import adminRoutes from './routes/admin'
+import paymentRoutes from './routes/payments'
 
 dotenv.config()
 const app = express()
 
 app.use(cors())
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }))
 app.use(express.json())
 
 app.get('/health', (req, res) => {
@@ -27,6 +29,7 @@ app.use('/api/orders', orderRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/payments', paymentRoutes)
 
 
 const PORT = process.env.PORT || 4000

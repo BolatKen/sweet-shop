@@ -7,24 +7,30 @@ import { Order } from '@/lib/types'
 
 export async function createOrder(prevState: string | undefined, formData: FormData) {
   const deliveryAddress = formData.get('deliveryAddress') as string
+  let stripeUrl: string
 
-  let orderId: string;
   try {
     const cartItems = await getCart() as any[]
-    if (!Array.isArray(cartItems) || cartItems.length === 0) return 'Корзина пуста'
+    if (!Array.isArray(cartItems) || cartItems.length === 0) return 'Cart is empty'
 
     const total = cartItems.reduce((sum, item) => sum + item.variant.price * item.quantity, 0)
 
-    const order = await apiFetch<{ id:string }> ('/api/orders', {
+    const order = await apiFetch<{ id: string }>('/api/orders', {
       method: 'POST',
       body: JSON.stringify({ deliveryAddress, total, items: cartItems })
     })
-    orderId = order.id
+
+    const session = await apiFetch<{ url: string }>('/api/payments/checkout', {
+      method: 'POST',
+      body: JSON.stringify({ orderId: order.id })
+    })
+
+    stripeUrl = session.url
   } catch {
-    return 'Ошибка при создании заказа'
+    return 'Error creating order'
   }
 
-  redirect(`/checkout/success/?orderId=${orderId}`)
+  redirect(stripeUrl)
 }
 
 export async function getOrders() {
@@ -33,4 +39,11 @@ export async function getOrders() {
 
 export async function getOrderById(orderId:string) {
      return apiFetch<Order>(`/api/orders/${orderId}`)
+}
+
+export async function createCheckoutSession(orderId: string) {
+  return apiFetch<{ url: string }>('/api/payments/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ orderId })
+  })
 }
