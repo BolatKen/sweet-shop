@@ -26,6 +26,30 @@ export async function updateUserRole(id: string, role: string) {
     method: 'PATCH',
     body: JSON.stringify({ role })
   })
-  console.log('updateUserRole response:', res)
   return res
+}
+
+export async function getCategories() {
+  return apiFetch<any[]>('/api/categories')
+}
+
+export async function updateCategory(id: string, data: string) {
+  const res = await  apiFetch<any[]>(`/api/categories/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ data })
+  })
+  return res
+}
+
+export async function createCategory(data: { name: string; slug: string; parentId?: string }) {
+  return apiFetch('/api/categories', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+}
+
+export async function deleteCategory(id: string) {
+  return apiFetch(`/api/categories/${id}`, {
+    method: 'DELETE'
+  })
 }

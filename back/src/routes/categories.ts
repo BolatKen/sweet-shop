@@ -25,4 +25,22 @@ router.post("/", authenticateToken, async (req, res) => {
     res.json(createdCategory);
 });
 
+router.patch('/:id', authenticateToken, async (req, res) => {
+  const id = req.params.id as string
+  const data = req.body
+  const updatedCategory = await prisma.product.update({
+    where: { id },
+    data
+  })
+  res.json(updatedCategory)
+})
+
+router.delete('/:id', authenticateToken, async (req, res) => {
+  const id = req.params.id as string
+  const deletedCategory = await prisma.category.delete({
+    where: { id }
+  })
+  res.json(deletedCategory)
+})
+
 export default router;

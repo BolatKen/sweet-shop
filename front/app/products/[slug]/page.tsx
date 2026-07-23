@@ -1,6 +1,7 @@
 import { getProductBySlug } from '@/lib/api/products'
 import Link from 'next/link'
 import  AddToCartButton  from '@/components/AddToCartButton'
+import ProductImages from '@/components/ProductImage'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -20,7 +21,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <Link href="/products" className="text-gray-400 text-sm hover:text-white transition">← Catalog</Link>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-gray-100 rounded-2xl h-96" />
+        {product.images && product.images.length > 0 ? (
+          <ProductImages images={product.images} name={product.name} />
+        ) : (
+          <div className="bg-gray-100 h-48 rounded-lg mb-3" />
+        )} 
 
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-bold">{product.name}</h1>

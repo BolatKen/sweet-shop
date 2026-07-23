@@ -20,6 +20,7 @@ export default async function AdminLayout({
                     <div className="flex gap-4">
                         <Link href="/admin" className="hover:text-gray-600">Dashboard</Link>
                         <Link href="/admin/products" className="hover:text-gray-600">Products</Link>
+                        <Link href="/admin/categories" className="hover:text-gray-600">Categories</Link>
                         <Link href="/admin/orders" className="hover:text-gray-600">Orders</Link>
                         <Link href="/admin/users" className="hover:text-gray-600">Users</Link>
                     </div>
