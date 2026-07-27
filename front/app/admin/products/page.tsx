@@ -31,7 +31,7 @@ export default function AdminProductPage() {
     setLoading(true)
     try {
         const data = await getProducts()
-        setProducts(data)
+        setProducts(data.products)
     } catch {
         setError('Failed to load products')
     } finally {

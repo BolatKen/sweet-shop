@@ -2,6 +2,7 @@ import { getProductBySlug } from '@/lib/api/products'
 import Link from 'next/link'
 import  AddToCartButton  from '@/components/AddToCartButton'
 import ProductImages from '@/components/ProductImage'
+import VariantSelector from '@/components/VariantSelector'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -33,16 +34,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           <div>
             <p className="text-sm font-semibold mb-2">Variants:</p>
-            <div className="flex flex-wrap gap-2">
+            {/* <div className="flex flex-wrap gap-2">
               {product.variants.map(variant => (
                 <div key={variant.id} className="border rounded-lg px-3 py-1 text-sm">
                   {variant.size} / {variant.color} — {(variant.price / 100).toLocaleString()} ₸
                 </div>
               ))}
-            </div>
+            </div> */}
+            {product.variants.length > 0 && (
+              <VariantSelector variants={product.variants} />
+            )}
           </div>
-          
-          <AddToCartButton variantId={product.variants[0].id} />
+{/*           
+          <AddToCartButton variantId={product.variants[0].id} /> */}
         </div>
       </div>
     </main>

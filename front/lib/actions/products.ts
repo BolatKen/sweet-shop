@@ -4,7 +4,7 @@ import { apiFetch } from '@/lib/api'
 import { Product, Category } from '@/lib/types'
 
 export async function getProducts() {
-  return apiFetch<Product[]>('/api/products')
+  return apiFetch<{ products: Product[], total: number, totalPages: number, page: number }>('/api/products')
 }
 
 export async function getCategories() {
