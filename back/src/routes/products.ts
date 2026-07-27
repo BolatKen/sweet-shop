@@ -5,10 +5,52 @@ import { authenticateToken } from "../middleware/auth";
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+    const { 
+        search,
+        category,
+        sortBy,
+        order,
+        page,
+        limit,
+    } = req.query
+
+    const pageNum = Number(page) || 1
+    const limitNum = Number(limit) || 12
+    const skip = (pageNum - 1) * limitNum
+
     const products = await prisma.product.findMany({
-        include: { variants: true}
-    });
-    res.json(products);
+        where: {
+        isActive: true,
+        ...(search ? {
+            name: { contains: search as string, mode: 'insensitive' }
+        } : {}),
+        ...(category ? { categoryId: category as string } : {}),
+        },
+        include: { variants: true },
+        orderBy: sortBy === 'price'
+        ? { variants: { _count: order === 'desc' ? 'desc' : 'asc' } }
+        : { createdAt: order === 'desc' ? 'desc' : 'asc' },
+        skip,
+        take: limitNum,
+    })
+
+    const total = await prisma.product.count({
+        where: {
+        isActive: true,
+        ...(search ? {
+            name: { contains: search as string, mode: 'insensitive' }
+        } : {}),
+        ...(category ? { categoryId: category as string } : {}),
+        }
+    })
+
+
+    res.json({
+        products,
+        total,
+        page: pageNum,
+        totalPages: Math.ceil(total / limitNum)
+    })
 });
 
 router.get('/:slug', async (req, res) => {
