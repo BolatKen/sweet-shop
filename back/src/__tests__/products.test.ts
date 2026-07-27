@@ -32,11 +32,11 @@ afterAll(async () => {
 
 describe('Products', () => {
   it('GET /api/products — should return array', async () => {
-    const response = await request(app)
-      .get('/api/products')
-      .expect(200)
-    expect(Array.isArray(response.body)).toBe(true)
-  })
+  const response = await request(app)
+    .get('/api/products')
+    .expect(200)
+  expect(Array.isArray(response.body.products)).toBe(true)
+})
 
   it('GET /api/products/:slug — should return product', async () => {
     const response = await request(app)
