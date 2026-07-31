@@ -18,35 +18,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
 
 
   if (res.status === 401) {
-    const refreshToken = cookieStore.get('refreshToken')?.value
-    if (!refreshToken) redirect('/auth/login')
-
-    const refreshRes = await fetch(`${API_URL}/api/auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken })
-    })
-
-    if (!refreshRes.ok) redirect('/auth/login');
-
-    const { accessToken } = await refreshRes.json()
-
-    cookieStore.set('accessToken', accessToken, {
-      httpOnly: true,
-      path: '/',
-      maxAge: 60 * 15
-    })
-
-    const retryRes = await fetch(`${API_URL}${path}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-        ...options.headers,
-      },
-    })
-
-    return retryRes.json()
+    redirect('/auth/login')
   }
 
   return res.json()
