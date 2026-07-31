@@ -1,0 +1,7 @@
+{
+  "name": "sweetshop",
+  "private": true,
+  "scripts": {
+    "test": "cd back && npm test && cd ../front && npm test"
+  }
+}

@@ -45,10 +45,19 @@ jobs:
       - name: Run tests
         working-directory: back
         run: npm test
+
+      - name: Run backend tests
+        working-directory: back
+        run: npm test
         env:
           DATABASE_URL: postgresql://user:pass@localhost:5432/shop_test
           JWT_SECRET: test_secret
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        
+
+      - name: Run frontend tests
+        working-directory: front
+        run: npm test
 
   deploy-back:
     needs: test
