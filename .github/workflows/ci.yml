@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         working-directory: back
         run: npm install
 
@@ -42,22 +42,22 @@ jobs:
         env:
           DATABASE_URL: postgresql://user:pass@localhost:5432/shop_test
 
-      - name: Run tests
-        working-directory: back
-        run: npm test
-
       - name: Run backend tests
         working-directory: back
         run: npm test
         env:
           DATABASE_URL: postgresql://user:pass@localhost:5432/shop_test
           JWT_SECRET: test_secret
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-        
+
+      - name: Install frontend dependencies
+        working-directory: front
+        run: npm install
 
       - name: Run frontend tests
         working-directory: front
         run: npm test
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000
 
   deploy-back:
     needs: test
@@ -71,7 +71,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Deploy to Vercel
         run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         env:
