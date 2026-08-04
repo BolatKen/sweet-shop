@@ -17,7 +17,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     return (
       <main className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16">
         <div className="bg-neutral-50 border border-neutral-200 rounded-3xl p-10 max-w-md w-full">
-          <span className="text-4xl mb-4 block">👟</span>
           <h1 className="text-2xl font-black uppercase tracking-tight text-black mb-2">Product Not Found</h1>
           <p className="text-neutral-500 text-sm mb-6">
             The item you are looking for might be out of stock or moved to a new collection.
@@ -81,14 +80,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           {/* Value Highlights */}
           <div className="border-t border-neutral-100 pt-6 mt-4 flex flex-col gap-4">
             <div className="flex items-start gap-3">
-              <span className="text-lg">🚚</span>
               <div>
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-black">Free Standard Delivery</h4>
                 <p className="text-xs text-neutral-500">Orders placed before 14:00 ship out same day.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <span className="text-lg">🔄</span>
               <div>
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-black">30-Day Free Return Policy</h4>
                 <p className="text-xs text-neutral-500">Unused items can be returned within 30 days of purchase.</p>

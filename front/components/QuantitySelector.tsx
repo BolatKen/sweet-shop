@@ -53,7 +53,7 @@ export default function QuantitySelector({
                 `}
                 aria-label="Decrease quantity"
             >
-                {quantity === 1 ? '🗑️' : '−'}
+                {quantity === 1 ? 'x' : '−'}
             </button>
             
             <div className="w-10 h-9 flex items-center justify-center border-y border-gray-300 bg-white font-medium text-sm">

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { getCategories, createCategory, deleteCategory } from '@/lib/actions/admin'
-import Button from '@/components/Button'
 import { Category } from '@/lib/types'
 
 export default function AdminCategoriesPage() {
@@ -16,7 +15,7 @@ export default function AdminCategoriesPage() {
       const data = await getCategories()
       setCategories(data || [])
     } catch {
-      setError('Failed to load categories')
+      setError('Не удалось обновить категории')
     }
   }
 
@@ -27,7 +26,7 @@ export default function AdminCategoriesPage() {
         const data = await getCategories()
         if (isMounted) setCategories(data || [])
       } catch {
-        if (isMounted) setError('Failed to load categories')
+        if (isMounted) setError('Не удалось загрузить категории')
       } finally {
         if (isMounted) setLoading(false)
       }
@@ -41,104 +40,162 @@ export default function AdminCategoriesPage() {
     try {
       await createCategory({
         name: formData.name,
-        slug: formData.slug,
+        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
         parentId: formData.parentId || undefined
       })
       setFormData({ name: '', slug: '', parentId: '' })
       await reloadCategories()
     } catch {
-      setError('Failed to create category')
+      setError('Не удалось создать категорию')
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this category?')) return
+    if (!confirm('Удалить эту категорию?')) return
     try {
       await deleteCategory(id)
       await reloadCategories()
     } catch {
-      setError('Failed to delete category')
+      setError('Не удалось удалить категорию')
     }
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading) {
+    return (
+      <div className="py-20 text-center text-neutral-500 font-bold uppercase tracking-wider text-xs">
+        Загрузка категорий...
+      </div>
+    )
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Categories</h1>
+    <div className="flex flex-col gap-8">
+      {/* Header */}
+      <div className="bg-white p-6 rounded-3xl border border-neutral-200 shadow-xs">
+        <h1 className="text-2xl font-black uppercase tracking-tight text-black">
+          Управление Категориями ({categories.length})
+        </h1>
+        <p className="text-neutral-500 text-xs mt-0.5">
+          Создание и структурирование категорий каталога товаров
+        </p>
+      </div>
 
-      {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4">{error}</div>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl text-xs font-bold">
+          {error}
+        </div>
+      )}
 
-      {/* Create form */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <h2 className="font-semibold mb-4">Create Category</h2>
+      {/* Create Category Form */}
+      <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xs">
+        <h2 className="text-lg font-black uppercase tracking-tight text-black mb-4 border-b border-neutral-100 pb-3">
+          Создать новую категорию
+        </h2>
         <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
+            <label className="text-xs font-extrabold uppercase tracking-wider text-black block mb-1.5">
+              Название Категории
+            </label>
             <input
+              type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="например: Обувь & Снинеры"
               required
-              className="w-full border rounded-lg px-4 py-2"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-2xl px-4 py-3 text-xs text-black outline-none focus:ring-1 focus:ring-black"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1">Slug</label>
+            <label className="text-xs font-extrabold uppercase tracking-wider text-black block mb-1.5">
+              Slug (URL идентификатор)
+            </label>
             <input
+              type="text"
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+              placeholder="например: shoes"
               required
-              className="w-full border rounded-lg px-4 py-2"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-2xl px-4 py-3 text-xs text-black outline-none focus:ring-1 focus:ring-black"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1">Parent Category</label>
+            <label className="text-xs font-extrabold uppercase tracking-wider text-black block mb-1.5">
+              Родительская категория
+            </label>
             <select
               value={formData.parentId}
               onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
-              className="w-full border rounded-lg px-4 py-2"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-2xl px-4 py-3 text-xs text-black outline-none focus:ring-1 focus:ring-black cursor-pointer"
             >
-              <option value="">None</option>
+              <option value="">Без родителя (Основная)</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
           </div>
-          <div className="md:col-span-3">
-            <Button type="submit">Create</Button>
+
+          <div className="md:col-span-3 pt-2">
+            <button
+              type="submit"
+              className="bg-black text-white font-extrabold px-8 py-3.5 rounded-full text-xs uppercase tracking-wider hover:bg-neutral-800 transition shadow-sm"
+            >
+              Создать категорию
+            </button>
           </div>
         </form>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Name</th>
-              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Slug</th>
-              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Parent</th>
-              <th className="text-right px-6 py-3 text-sm font-medium text-gray-500">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map(category => (
-              <tr key={category.id} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4">{category.name}</td>
-                <td className="px-6 py-4">{category.slug}</td>
-                <td className="px-6 py-4">{category.parentId || '-'}</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => handleDelete(category.id)}
-                    className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Categories List Table */}
+      <div className="bg-white rounded-3xl border border-neutral-200 shadow-xs overflow-hidden">
+        {categories.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-500">
+                  <th className="px-6 py-4">Название</th>
+                  <th className="px-6 py-4">Slug</th>
+                  <th className="px-6 py-4">Родительская категория</th>
+                  <th className="px-6 py-4 text-right">Действия</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100 text-xs">
+                {categories.map(category => (
+                  <tr key={category.id} className="hover:bg-neutral-50/80 transition">
+                    <td className="px-6 py-4 font-bold text-black flex items-center gap-2">
+                      <span>{category.name}</span>
+                    </td>
+                    <td className="px-6 py-4 font-mono text-neutral-500">
+                      {category.slug}
+                    </td>
+                    <td className="px-6 py-4 text-neutral-600 font-medium">
+                      {category.parentId ? (
+                        <span className="bg-neutral-100 px-2.5 py-1 rounded-full text-[10px] font-bold">
+                          {categories.find(c => c.id === category.parentId)?.name || category.parentId}
+                        </span>
+                      ) : (
+                        <span className="text-neutral-400 font-normal">Основная</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => handleDelete(category.id)}
+                        className="bg-red-50 hover:bg-red-100 text-red-700 px-3.5 py-1.5 rounded-full text-xs font-bold transition"
+                      >
+                        Удалить
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="py-16 text-center text-neutral-500 text-xs font-semibold">
+            Категории отсутствуют.
+          </div>
+        )}
       </div>
     </div>
   )

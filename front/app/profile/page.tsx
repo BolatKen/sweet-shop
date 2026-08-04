@@ -1,4 +1,5 @@
 import { getMe } from '@/lib/actions/profile'
+import { logoutUser } from '@/lib/actions/auth'
 import Link from 'next/link'
 
 export default async function ProfilePage() {
@@ -45,11 +46,18 @@ export default async function ProfilePage() {
                     </p>
                 </div>
 
-                {me.role === 'ADMIN' && (
-                    <Link href="/admin" className="relative z-10 bg-white text-black font-extrabold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:bg-neutral-200 transition shrink-0">
-                        Admin Portal →
-                    </Link>
-                )}
+                <div className="relative z-10 flex flex-wrap items-center gap-3">
+                    {me.role === 'ADMIN' && (
+                        <Link href="/admin" className="bg-white text-black font-extrabold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:bg-neutral-200 transition shrink-0">
+                            Admin Portal →
+                        </Link>
+                    )}
+                    <form action={logoutUser}>
+                        <button type="submit" className="border border-white/30 text-white hover:bg-white/10 font-extrabold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition">
+                            Log Out
+                        </button>
+                    </form>
+                </div>
             </div>
 
             {/* Order History Section */}
