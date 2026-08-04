@@ -40,16 +40,16 @@ export async function createProduct(data: Partial<Product>) {
   })
 }
 
-export async function updateProduct(slug: string, data: Partial<Product>) {
-  return apiFetch(`/api/products${slug}`, {
+export async function updateProduct(id: string, data: Partial<Product>) {
+  return apiFetch(`/api/products/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(data)
   })
 }
 
-export async function deleteProduct(slug: string) {
-  return apiFetch(`api/products/${slug}`), {
+export async function deleteProduct(id: string) {
+  return apiFetch(`/api/products/${id}`, {
     method: 'DELETE'
-  }
+  })
 }
 

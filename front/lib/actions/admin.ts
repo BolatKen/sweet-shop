@@ -1,6 +1,6 @@
 'use server'
 import { apiFetch } from '@/lib/api'
-import { Order, User } from '@/lib/types'
+import { Category, Order, User } from '@/lib/types'
 
 export async function getStats() {
   return apiFetch<{ products: number, orders: number, users: number }>('/api/admin/stats')
@@ -30,13 +30,13 @@ export async function updateUserRole(id: string, role: string) {
 }
 
 export async function getCategories() {
-  return apiFetch<any[]>('/api/categories')
+  return apiFetch<Category[]>('/api/categories')
 }
 
-export async function updateCategory(id: string, data: string) {
-  const res = await  apiFetch<any[]>(`/api/categories/${id}`, {
+export async function updateCategory(id: string, data: Partial<Category>) {
+  const res = await apiFetch<Category>(`/api/categories/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify({ data })
+    body: JSON.stringify(data)
   })
   return res
 }

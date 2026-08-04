@@ -10,10 +10,6 @@ export default function AdminuserPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadUsers()
-  }, [])
-
   const loadUsers = async () => {
     setLoading(true)
     try {
@@ -25,6 +21,10 @@ export default function AdminuserPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadUsers()
+  }, [])
 
   const handleRoleChange = async (id: string, Role: string) => {
     try {
