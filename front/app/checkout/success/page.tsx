@@ -34,7 +34,7 @@ export default async function SuccessPage({
             <main className="max-w-4xl mx-auto px-4 py-16">
                 <div className="text-center py-12 bg-neutral-50 rounded-2xl border border-neutral-200">
                     <h1 className="text-2xl font-bold text-neutral-900">Order not found</h1>
-                    <p className="text-neutral-500 mt-2">We couldn't retrieve the details for this order.</p>
+                    <p className="text-neutral-500 mt-2">We couldn&apos;t retrieve the details for this order.</p>
                     <Link href="/products" className="mt-6 inline-block bg-black text-white px-6 py-3 rounded-full font-medium hover:bg-neutral-800 transition">
                         Back to Catalog
                     </Link>

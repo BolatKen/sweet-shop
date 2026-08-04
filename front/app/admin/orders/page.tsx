@@ -2,34 +2,44 @@
 
 import { useState, useEffect } from 'react'
 import { getOrders, updateOrderStatus } from '@/lib/actions/admin'
+import { Order } from '@/lib/types'
 
 const STATUS_OPTIONS = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED']
 
 export default function AdminOrderPage() {
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadOrders()
-  }, [])
-
-  const loadOrders = async () => {
-    setLoading(true)
+  const reloadOrders = async () => {
     try {
       const data = await getOrders()
-      setOrders(data)
+      setOrders(data || [])
     } catch {
       setError('Failed to load orders')
-    } finally {
-      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    let isMounted = true
+    async function fetchOrders() {
+      try {
+        const data = await getOrders()
+        if (isMounted) setOrders(data || [])
+      } catch {
+        if (isMounted) setError('Failed to load orders')
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchOrders()
+    return () => { isMounted = false }
+  }, [])
 
   const handleStatusChange = async (id: string, status: string) => {
     try {
       await updateOrderStatus(id, status)
-      await loadOrders()
+      await reloadOrders()
     } catch {
       setError('Failed to update status')
     }

@@ -138,7 +138,7 @@ export default async function ProductPage({
           </svg>
           <h2 className="text-xl font-black uppercase tracking-tight text-black mb-1">No products found</h2>
           <p className="text-neutral-500 text-sm max-w-md mx-auto mb-6">
-            We couldn't find any products matching your current filters or search terms.
+            We couldn&apos;t find any products matching your current filters or search terms.
           </p>
           <Link href="/products" className="bg-black text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider">
             Clear All Filters

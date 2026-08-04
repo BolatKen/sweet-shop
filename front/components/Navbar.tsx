@@ -9,9 +9,7 @@ export default function Navbar({ authButton }: { authButton: React.ReactNode }) 
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
+
 
   useEffect(() => {
     const handleScroll = () => {

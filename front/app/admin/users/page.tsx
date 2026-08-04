@@ -2,34 +2,44 @@
 
 import { useState, useEffect } from 'react'
 import { getUsers, updateUserRole } from '@/lib/actions/admin'
+import { User } from '@/lib/types'
 
 const ROLE_OPTIONS = ['CUSTOMER', 'MANAGER', 'ADMIN']
 
 export default function AdminuserPage() {
-  const [Users, setUsers] = useState<any[]>([])
+  const [Users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const loadUsers = async () => {
-    setLoading(true)
+  const reloadUsers = async () => {
     try {
       const data = await getUsers()
       setUsers(data)
     } catch {
       setError('Failed to load Users')
-    } finally {
-      setLoading(false)
     }
   }
 
   useEffect(() => {
-    loadUsers()
+    let isMounted = true
+    async function fetchUsers() {
+      try {
+        const data = await getUsers()
+        if (isMounted) setUsers(data)
+      } catch {
+        if (isMounted) setError('Failed to load Users')
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchUsers()
+    return () => { isMounted = false }
   }, [])
 
   const handleRoleChange = async (id: string, Role: string) => {
     try {
       await updateUserRole(id, Role)
-      await loadUsers()
+      await reloadUsers()
     } catch {
       setError('Failed to update Role')
     }

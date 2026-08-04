@@ -28,7 +28,7 @@ export default async function Home() {
             SweetShop Season 2026
           </span>
           <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter max-w-5xl leading-[0.95] mb-6">
-            DON'T STOP. <br className="hidden sm:block" />
+            DON&apos;T STOP. <br className="hidden sm:block" />
             <span className="text-neutral-400">JUST WEAR IT.</span>
           </h1>
           <p className="text-neutral-400 text-base sm:text-xl max-w-2xl mb-10 font-normal leading-relaxed">

@@ -3,28 +3,38 @@
 import { useState, useEffect } from 'react'
 import { getCategories, createCategory, deleteCategory } from '@/lib/actions/admin'
 import Button from '@/components/Button'
+import { Category } from '@/lib/types'
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<any[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({ name: '', slug: '', parentId: '' })
 
-  useEffect(() => {
-    loadCategories()
-  }, [])
-
-  const loadCategories = async () => {
-    setLoading(true)
+  const reloadCategories = async () => {
     try {
       const data = await getCategories()
-      setCategories(data)
+      setCategories(data || [])
     } catch {
       setError('Failed to load categories')
-    } finally {
-      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    let isMounted = true
+    async function fetchCategories() {
+      try {
+        const data = await getCategories()
+        if (isMounted) setCategories(data || [])
+      } catch {
+        if (isMounted) setError('Failed to load categories')
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchCategories()
+    return () => { isMounted = false }
+  }, [])
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +45,7 @@ export default function AdminCategoriesPage() {
         parentId: formData.parentId || undefined
       })
       setFormData({ name: '', slug: '', parentId: '' })
-      await loadCategories()
+      await reloadCategories()
     } catch {
       setError('Failed to create category')
     }
@@ -45,7 +55,7 @@ export default function AdminCategoriesPage() {
     if (!confirm('Delete this category?')) return
     try {
       await deleteCategory(id)
-      await loadCategories()
+      await reloadCategories()
     } catch {
       setError('Failed to delete category')
     }

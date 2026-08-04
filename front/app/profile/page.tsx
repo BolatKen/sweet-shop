@@ -41,7 +41,7 @@ export default async function ProfilePage() {
                         {me.email}
                     </h1>
                     <p className="text-neutral-400 text-xs mt-1">
-                        Member since {new Date(me.createdAt || Date.now()).getFullYear()}
+                        Member since {me.createdAt ? new Date(me.createdAt).getFullYear() : 2026}
                     </p>
                 </div>
 
