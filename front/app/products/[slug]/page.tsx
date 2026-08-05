@@ -57,7 +57,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div>
             <span className="text-xs font-extrabold uppercase tracking-widest text-neutral-500 block mb-1">
-              {product.category?.name || 'SweetShop Official'}
+              {product.categoryId || 'SweetShop Official'}
             </span>
             <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-black">
               {product.name}
