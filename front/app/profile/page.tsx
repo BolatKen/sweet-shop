@@ -83,7 +83,7 @@ export default async function ProfilePage() {
                             const statusColor = 
                                 order.status === 'PAID' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
                                 order.status === 'SHIPPED' ? 'bg-blue-100 text-blue-800 border-blue-200' :
-                                order.status === 'DELIVERED' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                                order.status === 'DELIEVERED' ? 'bg-purple-100 text-purple-800 border-purple-200' :
                                 order.status === 'CANCELLED' ? 'bg-red-100 text-red-800 border-red-200' :
                                 'bg-amber-100 text-amber-800 border-amber-200';
 

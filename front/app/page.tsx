@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { getProducts } from '@/lib/api/products'
 
 export default async function Home() {
-  let products = []
+  let products: any[] = [];
   try {
     const res = await getProducts({ limit: 4, sortBy: 'createdAt', order: 'desc' })
     products = res?.products || []
@@ -158,7 +158,7 @@ export default async function Home() {
                     <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between">
                       {product.variants && product.variants.length > 0 ? (
                         <p className="font-black text-lg text-black">
-                          {(Math.min(...product.variants.map(v => v.price)) / 100).toLocaleString()} ₸
+                          {(Math.min(...product.variants.map((v:any) => v.price)) / 100).toLocaleString()} ₸
                         </p>
                       ) : (
                         <p className="font-black text-lg text-black">15,000 ₸</p>

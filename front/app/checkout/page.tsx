@@ -3,7 +3,7 @@ import CheckoutForm from '@/components/CheckoutForm'
 import Link from 'next/link'
 
 export default async function CheckoutPage() {
-  let cart = []
+  let cart: any[] = []
   try {
     const res = await getCart()
     cart = Array.isArray(res) ? res : []

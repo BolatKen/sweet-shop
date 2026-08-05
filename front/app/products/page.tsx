@@ -10,8 +10,13 @@ export default async function ProductPage({
   searchParams: Promise<{ search?: string; category?: string; sortBy?: string; order?: string; page?: string }>
 }) {
   const params = await searchParams
-  let productsData = { products: [], total: 0, totalPages: 1, page: 1 }
-  let categories = []
+  let productsData: { products: any[]; total: number; totalPages: number; page: number } = { 
+    products: [], 
+    total: 0, 
+    totalPages: 1, 
+    page: 1 
+  }
+  let categories: any[] = []
 
   try {
     productsData = await getProducts({
@@ -74,9 +79,9 @@ export default async function ProductPage({
       {/* Product Grid */}
       {products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map(product => {
+          {products.map((product: any) => {
             const minPrice = product.variants && product.variants.length > 0 
-              ? Math.min(...product.variants.map(v => v.price))
+              ? Math.min(...product.variants.map((v: any) => v.price))
               : 0;
 
             return (
@@ -98,7 +103,7 @@ export default async function ProductPage({
                     )}
                     {product.variants && product.variants.length > 0 && (
                       <div className="absolute bottom-2 left-2 flex gap-1 flex-wrap">
-                        {product.variants.slice(0, 3).map(v => (
+                        {product.variants.slice(0, 3).map((v: any) => (
                           <span key={v.id} className="bg-white/90 backdrop-blur-xs text-[10px] font-extrabold px-1.5 py-0.5 rounded text-neutral-800">
                             {v.size}
                           </span>
@@ -149,7 +154,7 @@ export default async function ProductPage({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex gap-2 mt-12 justify-center">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p: number) => (
             <Link
               key={p}
               href={`/products?page=${p}${params.search ? `&search=${params.search}` : ''}${params.category ? `&category=${params.category}` : ''}`}

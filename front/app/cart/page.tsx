@@ -4,7 +4,7 @@ import Image from 'next/image'
 import QuantitySelector from '@/components/QuantitySelector'
 
 export default async function CartPage() {
-    let cart = [];
+   let cart: any[] = []; 
     try {
         const res = await getCart();
         cart = Array.isArray(res) ? res : [];
