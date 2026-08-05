@@ -3,14 +3,14 @@
 import { apiFetch } from '@/lib/api'
 import { getCart } from '@/lib/actions/cart'
 import { redirect } from 'next/navigation'
-import { Order } from '@/lib/types'
+import { Order, CartItem } from '@/lib/types'
 
 export async function createOrder(prevState: string | undefined, formData: FormData) {
   const deliveryAddress = formData.get('deliveryAddress') as string
   let stripeUrl: string
 
   try {
-    const cartItems = await getCart() as any[]
+    const cartItems = (await getCart()) as CartItem[]
     if (!Array.isArray(cartItems) || cartItems.length === 0) return 'Cart is empty'
 
     const total = cartItems.reduce((sum, item) => sum + item.variant.price * item.quantity, 0)

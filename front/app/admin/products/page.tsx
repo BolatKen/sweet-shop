@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct, createVariant, deleteVariant, getCategories} from '@/lib/actions/products'
 import Button from '@/components/Button'
+import { Product, ProductVariant, Category } from '@/lib/types'
 
 export default function AdminProductPage() {
-  const [products, setProducts] = useState<any[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [categories, setCategories] = useState<any[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [imageInput, setImageInput] = useState('')
 
   const [formData, setFormData] = useState({
@@ -21,28 +22,40 @@ export default function AdminProductPage() {
     images: [] as string[],
   })
 
-  useEffect(() => {
-    loadProducts()
-    loadCategories()
-  }, [])
-
-
-  const loadProducts = async () => {
-    setLoading(true)
+  const reloadData = async () => {
     try {
-        const data = await getProducts()
-        setProducts(data.products)
+      const [prodRes, catRes] = await Promise.all([
+        getProducts(),
+        getCategories().catch(() => [])
+      ])
+      if (prodRes?.products) setProducts(prodRes.products)
+      if (catRes) setCategories(catRes)
     } catch {
-        setError('Failed to load products')
-    } finally {
-        setLoading(false)
+      setError('Failed to reload data')
     }
   }
 
-  const loadCategories = async () => {
-    const data = await getCategories()
-    setCategories(data);
-  }
+  useEffect(() => {
+    let isMounted = true
+    async function fetchData() {
+      try {
+        const [prodRes, catRes] = await Promise.all([
+          getProducts(),
+          getCategories().catch(() => [])
+        ])
+        if (isMounted) {
+          if (prodRes?.products) setProducts(prodRes.products)
+          if (catRes) setCategories(catRes)
+        }
+      } catch {
+        if (isMounted) setError('Failed to load products')
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchData()
+    return () => { isMounted = false }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +67,7 @@ export default function AdminProductPage() {
         await createProduct(formData)
       }
       resetForm()
-      await loadProducts()
+      await reloadData()
     } catch {
       setError('Failed to save product')
     }
@@ -64,13 +77,13 @@ export default function AdminProductPage() {
     if (!confirm('Delete this product?')) return
     try {
       await deleteProduct(id)
-      await loadProducts()
+      await reloadData()
     } catch {
       setError('Failed to delete product')
     }
   }
 
-    const startEdit = (product: any) => {
+    const startEdit = (product: Product) => {
     setEditingId(product.id)
     setFormData({
         name: product.name,
@@ -102,7 +115,7 @@ export default function AdminProductPage() {
         stock: Number(variantForm.stock)
         })
         setVariantForm({ size: '', color: '', price: '', stock: '' })
-        await loadProducts()
+        await reloadData()
     } catch {
         setError('Failed to add variant')
     }
@@ -112,7 +125,7 @@ export default function AdminProductPage() {
     if (!confirm('Delete this variant?')) return
     try {
         await deleteVariant(productId, variantId)
-        await loadProducts()
+        await reloadData()
     } catch {
         setError('Failed to delete variant')
     }
@@ -244,7 +257,7 @@ export default function AdminProductPage() {
                 </tr>
             </thead>
             <tbody>
-                {products.find(p => p.id === editingId)?.variants?.map((variant: any) => (
+                {products.find(p => p.id === editingId)?.variants?.map((variant: ProductVariant) => (
                 <tr key={variant.id} className="border-b">
                     <td className="px-4 py-2">{variant.size}</td>
                     <td className="px-4 py-2">{variant.color}</td>
