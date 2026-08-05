@@ -124,7 +124,7 @@ export default function AdminOrderPage() {
                   const statusBg = 
                     order.status === 'PAID' ? 'bg-blue-100 text-blue-800' :
                     order.status === 'SHIPPED' ? 'bg-blue-100 text-blue-800' :
-                    order.status === 'DELIVERED' ? 'bg-emerald-100 text-emerald-800' :
+                    order.status === 'DELIEVERED' ? 'bg-emerald-100 text-emerald-800' :
                     order.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
                     'bg-amber-100 text-amber-800'
 
