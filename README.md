@@ -108,16 +108,23 @@ NEXT_PUBLIC_API_URL=
 ## Testing
 
 ```bash
+# Backend (4 suites, 13 tests)
 cd back && npm test
+
+# Frontend (6 suites, 15 tests)
+cd front && npm test
 ```
 
-Tests run against a local PostgreSQL instance. GitHub Actions runs the full test suite on every push to `main` — deployment only happens if all tests pass.
+Backend tests use a mocked Prisma client (`src/lib/__mocks__/prisma.ts`) so they run without a live database.
+Frontend tests use React Testing Library with JSDOM.
+GitHub Actions runs the full test suite on every push to `main` — deployment only happens if all tests pass.
 
-Covered:
-- Health check
+### Test Coverage
+
+- Health check — server is up and responding
 - Auth — register, login, invalid credentials
 - Products — list, detail, unauthorized create
-- Cart — add, increment on duplicate, remove
+- Cart — add item, increment quantity on duplicate, remove item
 
 ---
 
@@ -147,3 +154,39 @@ Covered:
 | PATCH | /api/admin/orders/:id | Update order status (Admin) |
 | GET | /api/admin/users | All users (Admin) |
 | PATCH | /api/admin/users/:id | Update user role (Admin) |
+
+---
+
+## SSG & SEO
+
+The frontend uses Next.js App Router features to maximise search engine visibility and page load performance.
+
+### Static Site Generation (SSG) & Incremental Static Revalidation (ISR)
+
+| Page | Strategy | Revalidation |
+|------|----------|--------------|
+| `/` (home) | ISR | 60 seconds |
+| `/products` | ISR | 60 seconds |
+| `/products/[slug]` | SSG + ISR | Built at deploy, then 60 seconds |
+
+`generateStaticParams` in `app/products/[slug]/page.tsx` fetches all product slugs at build time so every product page is served as pre-rendered HTML with zero server compute on the first request.
+
+### Metadata & Open Graph
+
+Every page exports `generateMetadata()` or a static `metadata` object which generates:
+
+- Unique `<title>` and `<meta name="description">` per page
+- Open Graph tags for social sharing previews (`og:title`, `og:description`, `og:image`)
+- Twitter Card meta tags
+
+The root layout sets `metadataBase` so relative image URLs resolve correctly against the deployed domain.
+
+### Structured Data (JSON-LD)
+
+- `app/layout.tsx` injects a `Schema.org/Organization` script in `<head>` on every page.
+- `app/products/[slug]/page.tsx` injects a `Schema.org/Product` script with price offers and availability, enabling Google's rich product snippets.
+
+### Sitemap & Robots
+
+- `/sitemap.xml` — auto-generated via `app/sitemap.ts`, lists all static and product URLs with priority and change frequency hints.
+- `/robots.txt` — auto-generated via `app/robots.ts`, allows public pages and disallows `/admin`, `/checkout`, `/profile`, `/cart`.
