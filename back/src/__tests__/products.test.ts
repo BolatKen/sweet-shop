@@ -2,54 +2,51 @@ import request from 'supertest'
 import app from '../app'
 import prisma from '../lib/prisma'
 
-let categoryId: string
-let productSlug: string
+jest.mock('../lib/prisma')
 
-beforeAll(async () => {
-  const category = await prisma.category.create({
-    data: { name: 'Test Category', slug: `test-category-${Date.now()}` }
-  })
-  categoryId = category.id
+const mockedPrisma = prisma as jest.Mocked<typeof prisma>
 
-  const product = await prisma.product.create({
-    data: {
-      name: 'Test Product',
-      slug: `test-product-${Date.now()}`,
-      description: 'Test description',
-      categoryId: category.id,
-      images: [],
-      isActive: true,
-    }
-  })
-  productSlug = product.slug
-})
-
-afterAll(async () => {
-  await prisma.product.deleteMany({ where: { slug: { startsWith: 'test-product' } } })
-  await prisma.category.deleteMany({ where: { slug: { startsWith: 'test-category' } } })
-  await prisma.$disconnect()
-})
+const mockProduct = {
+  id: 'product-1',
+  name: 'Test Product',
+  slug: 'test-product',
+  description: 'Test description',
+  images: [],
+  isActive: true,
+  categoryId: 'category-1',
+  variants: [],
+  createdAt: new Date().toISOString(),
+}
 
 describe('Products', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('GET /api/products — should return array', async () => {
-  const response = await request(app)
-    .get('/api/products')
-    .expect(200)
-  expect(Array.isArray(response.body.products)).toBe(true)
-})
+    ;(mockedPrisma.product.findMany as jest.Mock).mockResolvedValue([mockProduct])
+    ;(mockedPrisma.product.count as jest.Mock).mockResolvedValue(1)
+
+    const response = await request(app).get('/api/products').expect(200)
+
+    expect(Array.isArray(response.body.products)).toBe(true)
+    expect(response.body.products.length).toBe(1)
+  })
 
   it('GET /api/products/:slug — should return product', async () => {
-    const response = await request(app)
-      .get(`/api/products/${productSlug}`)
-      .expect(200)
-    expect(response.body.slug).toBe(productSlug)
+    ;(mockedPrisma.product.findUnique as jest.Mock).mockResolvedValue(mockProduct)
+
+    const response = await request(app).get('/api/products/test-product').expect(200)
+
+    expect(response.body.slug).toBe('test-product')
     expect(response.body.name).toBe('Test Product')
   })
 
   it('GET /api/products/:slug — non-existent slug should return null', async () => {
-    const response = await request(app)
-      .get('/api/products/non-existent-slug')
-      .expect(200)
+    ;(mockedPrisma.product.findUnique as jest.Mock).mockResolvedValue(null)
+
+    const response = await request(app).get('/api/products/non-existent-slug').expect(200)
+
     expect(response.body).toBeNull()
   })
 

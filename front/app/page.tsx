@@ -2,6 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getProducts } from '@/lib/api/products'
 
+export const revalidate = 60
+
 export default async function Home() {
   let products: any[] = [];
   try {

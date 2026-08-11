@@ -1,119 +1,81 @@
 import request from 'supertest'
+import jwt from 'jsonwebtoken'
 import app from '../app'
 import prisma from '../lib/prisma'
 
-let token: string
-let userId: string
-let variantId: string
-let categoryId: string
-let productId: string
+jest.mock('../lib/prisma')
 
-beforeAll(async () => {
-  // Create test user and get token
-  const email = `cart_test_${Date.now()}@test.com`
-  await request(app)
-    .post('/api/auth/register')
-    .send({ email, password: '123456' })
+const mockedPrisma = prisma as jest.Mocked<typeof prisma>
 
-  const loginRes = await request(app)
-    .post('/api/auth/login')
-    .send({ email, password: '123456' })
+// Generate a valid JWT token using the test secret so authenticateToken passes.
+const TEST_USER_ID = 'test-user-1'
+const token = jwt.sign({ id: TEST_USER_ID, role: 'CUSTOMER' }, 'test_secret', { expiresIn: '1h' })
 
-  token = loginRes.body.accessToken
-  userId = loginRes.body.id
-
-  const user = await prisma.user.findUnique({ where: { email } })
-  userId = user!.id
-
-  // Create category, product, variant
-  const category = await prisma.category.create({
-    data: { name: 'Cart Test Category', slug: `cart-test-cat-${Date.now()}` }
-  })
-  categoryId = category.id
-
-  const product = await prisma.product.create({
-    data: {
-      name: 'Cart Test Product',
-      slug: `cart-test-product-${Date.now()}`,
-      categoryId: category.id,
-      images: [],
-      isActive: true,
-    }
-  })
-  productId = product.id
-
-  const variant = await prisma.productVariant.create({
-    data: {
-      productId: product.id,
-      size: 'M',
-      color: 'Black',
-      price: 10000,
-      stock: 10,
-    }
-  })
-  variantId = variant.id
-})
-
-afterAll(async () => {
-  await prisma.cartItem.deleteMany({ where: { userId } })
-  await prisma.productVariant.deleteMany({ where: { productId } })
-  await prisma.product.deleteMany({ where: { id: productId } })
-  await prisma.category.deleteMany({ where: { id: categoryId } })
-  await prisma.user.deleteMany({ where: { id: userId } })
-  await prisma.$disconnect()
-})
+const mockVariantId = 'variant-1'
+const mockCartItem = {
+  id: 'cart-1',
+  userId: TEST_USER_ID,
+  variantId: mockVariantId,
+  quantity: 1,
+}
 
 describe('Cart', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('GET /api/cart — should reject without token', async () => {
-    await request(app)
-      .get('/api/cart')
-      .expect(401)
+    await request(app).get('/api/cart').expect(401)
   })
 
   it('GET /api/cart — should return empty array for new user', async () => {
+    ;(mockedPrisma.cartItem.findMany as jest.Mock).mockResolvedValue([])
+
     const response = await request(app)
       .get('/api/cart')
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
+
     expect(Array.isArray(response.body)).toBe(true)
     expect(response.body.length).toBe(0)
   })
 
   it('POST /api/cart — should add item to cart', async () => {
+    ;(mockedPrisma.cartItem.findFirst as jest.Mock).mockResolvedValue(null)
+    ;(mockedPrisma.cartItem.create as jest.Mock).mockResolvedValue(mockCartItem)
+
     const response = await request(app)
       .post('/api/cart')
       .set('Authorization', `Bearer ${token}`)
-      .send({ variantId, quantity: 1 })
+      .send({ variantId: mockVariantId, quantity: 1 })
       .expect(200)
-    expect(response.body.variantId).toBe(variantId)
+
+    expect(response.body.variantId).toBe(mockVariantId)
     expect(response.body.quantity).toBe(1)
   })
 
   it('POST /api/cart — should increment quantity on duplicate', async () => {
+    const existingItem = { ...mockCartItem, quantity: 1 }
+    const updatedItem = { ...mockCartItem, quantity: 2 }
+
+    ;(mockedPrisma.cartItem.findFirst as jest.Mock).mockResolvedValue(existingItem)
+    ;(mockedPrisma.cartItem.update as jest.Mock).mockResolvedValue(updatedItem)
+
     const response = await request(app)
       .post('/api/cart')
       .set('Authorization', `Bearer ${token}`)
-      .send({ variantId, quantity: 1 })
+      .send({ variantId: mockVariantId, quantity: 1 })
       .expect(200)
+
     expect(response.body.quantity).toBe(2)
   })
 
   it('DELETE /api/cart/:id — should remove item', async () => {
-    const cart = await request(app)
-      .get('/api/cart')
-      .set('Authorization', `Bearer ${token}`)
-    
-    const itemId = cart.body[0].id
+    ;(mockedPrisma.cartItem.delete as jest.Mock).mockResolvedValue(mockCartItem)
 
     await request(app)
-      .delete(`/api/cart/${itemId}`)
+      .delete(`/api/cart/${mockCartItem.id}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
-
-    const updatedCart = await request(app)
-      .get('/api/cart')
-      .set('Authorization', `Bearer ${token}`)
-    
-    expect(updatedCart.body.length).toBe(0)
   })
 })

@@ -1,8 +1,31 @@
 import { getProducts } from '@/lib/api/products'
 import { getCategories } from '@/lib/api/categories'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import ProductFilters from '@/components/ProductFilters'
+
+export const revalidate = 60
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; search?: string }>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const category = params.category
+  const search = params.search
+  const title = category
+    ? `${category.charAt(0).toUpperCase() + category.slice(1)} Collection`
+    : search
+    ? `Search: ${search}`
+    : 'All Products'
+
+  return {
+    title,
+    description: `Browse SweetShop's ${title.toLowerCase()} — premium streetwear, sneakers, and accessories.`,
+  }
+}
 
 export default async function ProductPage({
   searchParams

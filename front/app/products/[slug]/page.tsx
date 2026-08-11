@@ -1,7 +1,47 @@
-import { getProductBySlug } from '@/lib/api/products'
+import type { Metadata } from 'next'
+import { getProductBySlug, getProducts } from '@/lib/api/products'
 import Link from 'next/link'
 import ProductImages from '@/components/ProductImage'
 import VariantSelector from '@/components/VariantSelector'
+
+export const revalidate = 60
+
+// Pre-render every product page at build time (SSG).
+export async function generateStaticParams() {
+  try {
+    const data = await getProducts({ limit: 100 })
+    return (data?.products ?? []).map((p) => ({ slug: p.slug }))
+  } catch {
+    return []
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  try {
+    const product = await getProductBySlug(slug)
+    if (!product) return {}
+    const minPrice = product.variants?.length
+      ? Math.min(...product.variants.map((v) => v.price)) / 100
+      : undefined
+    return {
+      title: product.name,
+      description: product.description ?? `${product.name} — available at SweetShop.`,
+      openGraph: {
+        title: product.name,
+        description: product.description ?? `${product.name} — available at SweetShop.`,
+        images: product.images?.[0] ? [{ url: product.images[0] }] : [],
+        ...(minPrice !== undefined && { price: String(minPrice) }),
+      },
+    }
+  } catch {
+    return {}
+  }
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -29,8 +69,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     )
   }
 
+  const minPrice = product.variants?.length
+    ? Math.min(...product.variants.map((v) => v.price)) / 100
+    : undefined
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description ?? undefined,
+    image: product.images ?? [],
+    offers: product.variants?.map((v) => ({
+      '@type': 'Offer',
+      price: (v.price / 100).toFixed(2),
+      priceCurrency: 'KZT',
+      availability: v.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    })),
+  }
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-8 uppercase tracking-wider">
         <Link href="/" className="hover:text-black transition">Home</Link>
