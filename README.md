@@ -73,6 +73,7 @@ cd back
 cp .env.example .env
 npm install
 npx prisma migrate dev
+npm run seed        # populate the database (see below)
 npm run dev
 ```
 
@@ -102,6 +103,23 @@ PORT=
 ```
 NEXT_PUBLIC_API_URL=
 ```
+
+---
+
+## Database Seeding
+
+```bash
+cd back
+npm run seed
+```
+
+Populates the database with categories, products with variants, and demo accounts. Safe to run multiple times — existing records are skipped via upsert.
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@sweetshop.kz` | `admin123` |
+| Manager | `manager@sweetshop.kz` | `manager123` |
+| Customer | `customer@sweetshop.kz` | `user123` |
 
 ---
 
