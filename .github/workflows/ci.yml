@@ -71,6 +71,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Check secrets
+        run: |
+          [ -n "$VERCEL_ORG_ID" ] && echo "org ok" || echo "org EMPTY"
+          [ -n "$VERCEL_PROJECT_ID" ] && echo "project ok" || echo "project EMPTY"
+          [ -n "$VERCEL_TOKEN" ] && echo "token ok" || echo "token EMPTY"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       - name: Deploy to Vercel
         run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         env:
